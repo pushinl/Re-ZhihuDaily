@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group>
+        <item
+            android:id="@+id/userIcon"
+            android:icon="@mipmap/ic_user"
+            android:title="知乎用户"/>
+    </group>
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/myStar"
+            android:icon="@drawable/ic_star"
+            android:title="@string/mystar" />
+        <item
+            android:id="@+id/lixian"
+            android:icon="@android:drawable/ic_input_get"
+            android:title="@string/offline" />
+    </group>
+</menu>
