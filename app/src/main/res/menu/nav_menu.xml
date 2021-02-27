@@ -4,7 +4,7 @@
     <group>
         <item
             android:id="@+id/userIcon"
-            android:icon="@mipmap/ic_user"
+            android:icon="@drawable/ic_user"
             android:title="知乎用户"/>
     </group>
 

@@ -10,7 +10,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ReZhihuDaily">
+        android:theme="@style/Theme.ReZhihuDaily"
+        android:networkSecurityConfig="@xml/network_config">
         <activity android:name=".ui.NewsContentActivity"></activity>
         <activity android:name=".ui.HomeActivity">
             <intent-filter>
