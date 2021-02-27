@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.rezhihudaily.recylerview.Adapter
 import com.example.rezhihudaily.R
 import com.example.rezhihudaily.client.Bean
@@ -35,11 +36,10 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        initNews()
-
         //加载布局
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         //侧滑边栏
         setSupportActionBar(binding.toolbar)
         supportActionBar?.let {
@@ -58,6 +58,9 @@ class HomeActivity : AppCompatActivity() {
         //设置adapter
         val adapter = Adapter(this, newsList)
         binding.recyclerView.adapter = adapter
+
+        initNews()
+        uploadMore()
 
         //下拉刷新
         binding.swipeRefresh.setColorSchemeResources(R.color.design_default_color_primary)
@@ -83,37 +86,74 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun initNews() {
-        thread {
-            val retrofit = Retrofit.Builder()
+        val retrofit = Retrofit.Builder()
                 .baseUrl("https://news-at.zhihu.com/api/4/news/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
-            val newsListService = retrofit.create(NetService::class.java)
-            var item: Bean?
-            var date: String
-            newsListService.dataList.enqueue(object : Callback<Bean> {
-                override fun onResponse(call: Call<Bean>, response: Response<Bean>) {
-                    item = response.body()
-                    date = item!!.date
-                    addNewsList(item!!)
-                }
-
-                override fun onFailure(call: Call<Bean>, t: Throwable) {
-                    t.printStackTrace()
-                }
-            })
-        }
+        val newsListService = retrofit.create(NetService::class.java)
+        var item: Bean?
+        newsListService.dataList.enqueue(object : Callback<Bean> {
+            override fun onResponse(call: Call<Bean>, response: Response<Bean>) {
+                item = response.body()
+                date = item!!.date
+                addNewsList(item!!)
+                binding.recyclerView.adapter!!.notifyDataSetChanged()
+            }
+            override fun onFailure(call: Call<Bean>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
     }
 
-    private fun refreshNews(adapter: Adapter) {
-        thread {
-            Thread.sleep(2000)
-            runOnUiThread {
-                initNews()
-                adapter.notifyDataSetChanged()
-                binding.swipeRefresh.isRefreshing = false
+    private fun uploadMore() {
+        binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                val layoutManager = recyclerView.layoutManager
+                val visibleCount = layoutManager!!.childCount
+                val totalCount = layoutManager.itemCount
+                val lastVisiableItemPos = (layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+                if (visibleCount > 0 && newState == RecyclerView.SCROLL_STATE_IDLE
+                        && lastVisiableItemPos >= totalCount - 1) {
+                    loadMore()
+                }
             }
-        }
+        })
+    }
+
+    private fun loadMore(){
+        val retrofit = Retrofit.Builder()
+                .baseUrl("https://news-at.zhihu.com/api/4/news/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+        val newsListService = retrofit.create(NetService::class.java)
+        var item: Bean?
+        newsListService.getList(date!!).enqueue(object : Callback<Bean> {
+            override fun onResponse(call: Call<Bean>, response: Response<Bean>) {
+                item = response.body()
+                date = item!!.date
+                addNewsList(item!!)
+                binding.recyclerView.adapter!!.notifyDataSetChanged()
+            }
+            override fun onFailure(call: Call<Bean>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+    }
+
+
+
+    private fun refreshNews(adapter: Adapter) {
+        newsClear()
+        initNews()
+        loadMore()
+        adapter.notifyDataSetChanged()
+        binding.swipeRefresh.isRefreshing = false
+    }
+
+    private fun newsClear() {
+        newsList.clear()
+        topNewsList.clear()
     }
 
     fun addNewsList(bean: Bean) {
