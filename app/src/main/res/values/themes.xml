@@ -5,4 +5,8 @@
         <item name="colorPrimary">@color/design_default_color_primary</item>
         <item name="colorPrimaryDark">@color/design_default_color_primary_dark</item>
     </style>
+
+    <style name="NewsContentTheme" parent="Theme.ReZhihuDaily">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
 </resources>

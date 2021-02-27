@@ -29,8 +29,8 @@ class HomeActivity : AppCompatActivity() {
     //使用ViewBinding代替findViewById,延迟初始化
     private lateinit var binding: ActivityHomeBinding
 
-    private val newsList = ArrayList<NewsBean>()
-    private val topNewsList = ArrayList<TopNewsBean>()
+    private val newsList = mutableListOf<NewsBean>()
+    private val topNewsList = mutableListOf<TopNewsBean>()
     var date: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +60,7 @@ class HomeActivity : AppCompatActivity() {
         binding.recyclerView.adapter = adapter
 
         initNews()
-        uploadMore()
+        upLoadMore()
 
         //下拉刷新
         binding.swipeRefresh.setColorSchemeResources(R.color.design_default_color_primary)
@@ -105,7 +105,7 @@ class HomeActivity : AppCompatActivity() {
         })
     }
 
-    private fun uploadMore() {
+    private fun upLoadMore() {
         binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
@@ -144,11 +144,15 @@ class HomeActivity : AppCompatActivity() {
 
 
     private fun refreshNews(adapter: Adapter) {
-        newsClear()
-        initNews()
-        loadMore()
-        adapter.notifyDataSetChanged()
-        binding.swipeRefresh.isRefreshing = false
+        thread {
+            Thread.sleep(2000)
+            runOnUiThread {
+                newsClear()
+                initNews()
+                adapter.notifyDataSetChanged()
+                binding.swipeRefresh.isRefreshing = false
+            }
+        }
     }
 
     private fun newsClear() {
@@ -167,7 +171,7 @@ class HomeActivity : AppCompatActivity() {
             image = bean.stories[i].images[0]
             url = bean.stories[i].url
             newsList.add(NewsBean(title, hint, image, url))
-            Log.d("MainActivity", "addNewsList: ${bean.stories[i].title}")
+            //Log.d("MainActivity", "addNewsList: ${bean.stories[i].title}")
         }
     }
 

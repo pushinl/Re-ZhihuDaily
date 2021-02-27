@@ -28,7 +28,9 @@ class Adapter(private val context: Context, private val newsList: List<NewsBean>
             val aNews = newsList[position]
             val intent = Intent(context, NewsContentActivity::class.java).apply {
                 putExtra(NewsContentActivity.NEWS_TITLE, aNews.title)
-                putExtra(NewsContentActivity.NEWS_IMAGE_ID, aNews.image)
+                putExtra(NewsContentActivity.NEWS_IMAGE, aNews.image)
+                putExtra(NewsContentActivity.NEWS_HINT, aNews.hint)
+                putExtra(NewsContentActivity.NEWS_URL, aNews.url)
             }
             context.startActivity(intent)
         }
