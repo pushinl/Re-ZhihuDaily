@@ -9,7 +9,8 @@ data class NewsBean(
     val title: String,
     val hint: String,
     val image: String,
-    val url: String
+    val url: String,
+    val date: String
 )
 
 data class TopNewsBean(

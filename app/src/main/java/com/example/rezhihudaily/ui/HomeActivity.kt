@@ -170,7 +170,7 @@ class HomeActivity : AppCompatActivity() {
             hint = bean.stories[i].hint
             image = bean.stories[i].images[0]
             url = bean.stories[i].url
-            newsList.add(NewsBean(title, hint, image, url))
+            newsList.add(NewsBean(title, hint, image, url, date!!))
             //Log.d("MainActivity", "addNewsList: ${bean.stories[i].title}")
         }
     }
