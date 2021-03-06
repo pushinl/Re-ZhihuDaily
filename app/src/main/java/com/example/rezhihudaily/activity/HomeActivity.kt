@@ -147,7 +147,6 @@ class HomeActivity : AppCompatActivity() {
 
     private fun refreshNews(adapter: Adapter) {
         thread {
-            Thread.sleep(1000)
             runOnUiThread {
                 newsClear()
                 initNews()
