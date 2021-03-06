@@ -1,8 +1,7 @@
-package com.example.rezhihudaily.ui
+package com.example.rezhihudaily.activity
 
 import android.os.Bundle
 import android.view.MenuItem
-import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.rezhihudaily.databinding.ActivityNewsContentBinding

@@ -1,4 +1,4 @@
-package com.example.rezhihudaily.recylerview
+package com.example.rezhihudaily.adapter
 
 import android.content.Context
 import android.content.Intent
@@ -7,14 +7,17 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
+import com.example.rezhihudaily.databinding.BannerBinding
 import com.example.rezhihudaily.databinding.NewsDatelineBinding
 import com.example.rezhihudaily.databinding.NewsItemBinding
-import com.example.rezhihudaily.model.NewsBean
-import com.example.rezhihudaily.ui.NewsContentActivity
+import com.example.rezhihudaily.`class`.NewsBean
+import com.example.rezhihudaily.`class`.TopNewsBean
+import com.example.rezhihudaily.activity.NewsContentActivity
 
 
-class Adapter(private val context: Context, private val newsList: List<NewsBean>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class Adapter(private val context: Context, private val newsList: MutableList<NewsBean>, private val topNewsList: MutableList<TopNewsBean>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     inner class ItemViewHolder(binding: NewsItemBinding) : RecyclerView.ViewHolder(binding.root) {
         val newsImage: ImageView = binding.newsImage
@@ -26,8 +29,16 @@ class Adapter(private val context: Context, private val newsList: List<NewsBean>
         val date: TextView = binding.newsDate
     }
 
+    inner class TopNewsViewHolder(binding: BannerBinding) : RecyclerView.ViewHolder(binding.root) {
+        val viewPager: ViewPager = binding.topNewsBanner
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        if(viewType == 1) {
+        if(viewType == 2) {
+            val binding = BannerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            val holder = TopNewsViewHolder(binding)
+            return holder
+        } else if(viewType == 1) {
             val binding = NewsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             val holder = ItemViewHolder(binding)
             holder.itemView.setOnClickListener {
@@ -51,16 +62,20 @@ class Adapter(private val context: Context, private val newsList: List<NewsBean>
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
         when(holder) {
+            is TopNewsViewHolder ->{
+                holder.viewPager.adapter = ViewPagerAdapter(context, topNewsList)
+            }
+
             is ItemViewHolder -> {
                 val aNews = newsList[position]
                 holder.newsTitle.text = aNews.title
                 holder.newsHint.text = aNews.hint
-                Glide.with(context).load(aNews.image).into(holder.newsImage)//加载图片
+                Glide.with(context).load(aNews.image).into(holder.newsImage)//Glide加载图片
             }
 
             is DatelineViewHolder -> {
                 val aNews = newsList[position]
-                holder.date.text = getDate(aNews.date, position)
+                holder.date.text = getDate(aNews.date)
             }
         }
 
@@ -69,16 +84,14 @@ class Adapter(private val context: Context, private val newsList: List<NewsBean>
     override fun getItemCount() = newsList.size
 
     override fun getItemViewType(position: Int): Int {
+        if(position == 0) return 2
         if(position % 6 == 0) return 0
         return 1
     }
 
 
-    fun getDate(date: String, position: Int): String {
+    private fun getDate(date: String): String {//解析日期字符串（写法非常暴力且烂
         var dateText: String
-        if(position == 0) {
-            return "今日热闻"
-        }
         dateText = if(date[4] == '0') date.substring(date.length - 3, date.length-2)
         else date.substring(date.length - 4, date.length-2)
         dateText += "月"

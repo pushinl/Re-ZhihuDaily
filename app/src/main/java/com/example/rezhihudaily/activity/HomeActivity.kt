@@ -1,8 +1,6 @@
-package com.example.rezhihudaily.ui
+package com.example.rezhihudaily.activity
 
-import android.content.ContentValues
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -10,13 +8,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.rezhihudaily.recylerview.Adapter
+import com.example.rezhihudaily.adapter.Adapter
 import com.example.rezhihudaily.R
-import com.example.rezhihudaily.client.Bean
-import com.example.rezhihudaily.client.NetService
+import com.example.rezhihudaily.network.Bean
+import com.example.rezhihudaily.network.NetService
 import com.example.rezhihudaily.databinding.ActivityHomeBinding
-import com.example.rezhihudaily.model.NewsBean
-import com.example.rezhihudaily.model.TopNewsBean
+import com.example.rezhihudaily.`class`.NewsBean
+import com.example.rezhihudaily.`class`.TopNewsBean
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -56,7 +54,7 @@ class HomeActivity : AppCompatActivity() {
         val layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
         //设置adapter
-        val adapter = Adapter(this, newsList)
+        val adapter = Adapter(this, newsList, topNewsList)
         binding.recyclerView.adapter = adapter
 
         initNews()
@@ -95,8 +93,12 @@ class HomeActivity : AppCompatActivity() {
         newsListService.dataList.enqueue(object : Callback<Bean> {
             override fun onResponse(call: Call<Bean>, response: Response<Bean>) {
                 item = response.body()
-                date = item!!.date
-                addNewsList(item!!)
+                if(item != null) {
+                    date = item!!.date
+                    addTopNewsList(item!!)
+                    addNewsList(item!!)
+                }
+
                 binding.recyclerView.adapter!!.notifyDataSetChanged()
             }
             override fun onFailure(call: Call<Bean>, t: Throwable) {
@@ -145,7 +147,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun refreshNews(adapter: Adapter) {
         thread {
-            Thread.sleep(2000)
+            Thread.sleep(1000)
             runOnUiThread {
                 newsClear()
                 initNews()

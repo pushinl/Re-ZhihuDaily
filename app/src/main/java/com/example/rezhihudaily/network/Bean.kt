@@ -1,4 +1,4 @@
-package com.example.rezhihudaily.client
+package com.example.rezhihudaily.network
 
 class Bean {
     lateinit var date: String

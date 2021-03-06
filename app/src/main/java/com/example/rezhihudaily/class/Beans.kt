@@ -1,8 +1,5 @@
-package com.example.rezhihudaily.model
+package com.example.rezhihudaily.`class`
 
-import android.content.ContentValues.TAG
-import android.util.Log
-import com.example.rezhihudaily.client.Bean
 import java.io.Serializable
 
 data class NewsBean(
@@ -19,4 +16,4 @@ data class TopNewsBean(
     val image: String,
     val url: String,
     val position: Int
-) : Serializable
+)

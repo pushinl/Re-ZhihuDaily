@@ -1,4 +1,4 @@
-package com.example.rezhihudaily.client
+package com.example.rezhihudaily.network
 
 import retrofit2.Call
 import retrofit2.http.GET
