@@ -67,7 +67,7 @@ class Adapter(private val context: Context, private val newsList: MutableList<Ne
             }
 
             is ItemViewHolder -> {
-                val aNews = newsList[position]
+                val aNews = newsList[position-1]
                 holder.newsTitle.text = aNews.title
                 holder.newsHint.text = aNews.hint
                 Glide.with(context).load(aNews.image).into(holder.newsImage)//Glide加载图片
@@ -85,7 +85,7 @@ class Adapter(private val context: Context, private val newsList: MutableList<Ne
 
     override fun getItemViewType(position: Int): Int {
         if(position == 0) return 2
-        if(position % 6 == 0) return 0
+        if(position % 7 == 0) return 0
         return 1
     }
 

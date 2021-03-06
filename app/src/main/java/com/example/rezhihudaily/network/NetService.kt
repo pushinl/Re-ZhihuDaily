@@ -10,7 +10,4 @@ interface NetService {
 
     @GET("before/{date}")
     fun getList(@Path("date") date:String): Call<Bean>
-
-    @GET("{id}")
-    fun getNews(@Path("id") id: Int): Call<Bean.StoryBean>
 }
