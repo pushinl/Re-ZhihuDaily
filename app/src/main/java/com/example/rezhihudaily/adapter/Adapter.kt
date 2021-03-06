@@ -36,14 +36,13 @@ class Adapter(private val context: Context, private val newsList: MutableList<Ne
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if(viewType == 2) {
             val binding = BannerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            val holder = TopNewsViewHolder(binding)
-            return holder
+            return TopNewsViewHolder(binding)
         } else if(viewType == 1) {
             val binding = NewsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             val holder = ItemViewHolder(binding)
             holder.itemView.setOnClickListener {
                 val position = holder.adapterPosition
-                val aNews = newsList[position]
+                val aNews = newsList[position-1]
                 val intent = Intent(context, NewsContentActivity::class.java).apply {
                     putExtra(NewsContentActivity.NEWS_TITLE, aNews.title)
                     putExtra(NewsContentActivity.NEWS_IMAGE, aNews.image)
@@ -74,7 +73,7 @@ class Adapter(private val context: Context, private val newsList: MutableList<Ne
             }
 
             is DatelineViewHolder -> {
-                val aNews = newsList[position]
+                val aNews = newsList[position-1]
                 holder.date.text = getDate(aNews.date)
             }
         }
