@@ -27,6 +27,9 @@ class Adapter(private val context: Context, private val newsList: MutableList<Ne
 
     inner class DatelineViewHolder(binding: NewsDatelineBinding) : RecyclerView.ViewHolder(binding.root) {
         val date: TextView = binding.newsDate
+        val newsImage: ImageView = binding.newsImage
+        val newsTitle: TextView = binding.newsTitle
+        val newsHint: TextView = binding.newsHint
     }
 
     inner class TopNewsViewHolder(binding: BannerBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -54,7 +57,19 @@ class Adapter(private val context: Context, private val newsList: MutableList<Ne
             return holder
         } else {
             val binding = NewsDatelineBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            return DatelineViewHolder(binding)
+            val holder = DatelineViewHolder(binding)
+            holder.itemView.setOnClickListener {
+                val position = holder.adapterPosition
+                val aNews = newsList[position-1]
+                val intent = Intent(context, NewsContentActivity::class.java).apply {
+                    putExtra(NewsContentActivity.NEWS_TITLE, aNews.title)
+                    putExtra(NewsContentActivity.NEWS_IMAGE, aNews.image)
+                    putExtra(NewsContentActivity.NEWS_HINT, aNews.hint)
+                    putExtra(NewsContentActivity.NEWS_URL, aNews.url)
+                }
+                context.startActivity(intent)
+            }
+            return holder
         }
     }
 
@@ -75,6 +90,9 @@ class Adapter(private val context: Context, private val newsList: MutableList<Ne
             is DatelineViewHolder -> {
                 val aNews = newsList[position-1]
                 holder.date.text = getDate(aNews.date)
+                holder.newsTitle.text = aNews.title
+                holder.newsHint.text = aNews.hint
+                Glide.with(context).load(aNews.image).into(holder.newsImage)//Glide加载图片
             }
         }
 
@@ -84,7 +102,7 @@ class Adapter(private val context: Context, private val newsList: MutableList<Ne
 
     override fun getItemViewType(position: Int): Int {
         if(position == 0) return 2
-        if(position % 7 == 0) return 0
+        if((position-1) % 6 == 0 && position != 1) return 0
         return 1
     }
 

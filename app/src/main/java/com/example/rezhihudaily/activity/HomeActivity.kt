@@ -93,12 +93,11 @@ class HomeActivity : AppCompatActivity() {
         newsListService.dataList.enqueue(object : Callback<Bean> {
             override fun onResponse(call: Call<Bean>, response: Response<Bean>) {
                 item = response.body()
-                if(item != null) {
-                    date = item!!.date
-                    addTopNewsList(item!!)
-                    addNewsList(item!!)
+                item?.let {
+                    date = it.date
+                    addTopNewsList(it)
+                    addNewsList(it)
                 }
-
                 binding.recyclerView.adapter!!.notifyDataSetChanged()
             }
             override fun onFailure(call: Call<Bean>, t: Throwable) {
